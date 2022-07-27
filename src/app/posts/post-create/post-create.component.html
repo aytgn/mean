@@ -1,8 +1,9 @@
-<mat-card>
+<mat-card class="masst-card">
   <mat-form-field>
-    <textarea matInput rows="6" [(ngModel)]="enteredPost"></textarea>
+    <input matInput type="text" [(ngModel)]="enteredTitle" [placeholder]="'title'" class="blackPlaceHolder">
+  </mat-form-field>
+  <mat-form-field>
+    <textarea matInput rows="6" [(ngModel)]="enteredContent" [placeholder]="'content'"></textarea>
   </mat-form-field>
   <button mat-raised-button color="accent" (click)="onPostSubmit()">Save Post</button>
 </mat-card>
-
-<p>{{ newPost }}</p>
