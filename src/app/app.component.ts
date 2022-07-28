@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { post } from './posts/post.model';
+import { Post } from './posts/post.model';
 
 @Component({
   selector: 'app-root',
@@ -7,9 +7,9 @@ import { post } from './posts/post.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  posts:post[] = []
+  posts:Post[] = []
 
-  onPostAdded(newPost:post){
+  onPostAdded(newPost:Post){
     this.posts.push(newPost)
   }
 }

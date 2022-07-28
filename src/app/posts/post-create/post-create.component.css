@@ -1,14 +1,10 @@
-.masst-card{
+mat-card{
   width: 80%;
   margin:auto;
   margin-top: 1em;
-  color: black;
 }
 mat-form-field,
 textarea{
   width: 100%;
-}
 
-.blackPlaceHolder::placeholder{
-  color: rebeccapurple !important
 }
