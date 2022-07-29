@@ -8,11 +8,15 @@ import { PostsService } from '../posts.service';
   styleUrls: ['./post-list.component.css'],
 })
 export class PostListComponent implements OnInit, OnDestroy {
-  @Input() posts: Post[] = [];
+  posts: Post[] = [];
   private postsSubs: Subscription = new Subscription();
+
   constructor(public postsService: PostsService) {}
+
   ngOnInit() {
-    this.posts = this.postsService.getPosts();
+    //trigger the service
+    this.postsService.getPosts();
+    //subscribe postUpdating
     this.postsSubs = this.postsService
       .getPostUpdateListener()
       .subscribe((posts: Post[]) => {
