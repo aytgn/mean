@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Post } from '../post.model';
+import { Subscription } from 'rxjs';
 import { PostsService } from '../posts.service';
 
 @Component({
@@ -8,14 +8,21 @@ import { PostsService } from '../posts.service';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css'],
 })
-export class PostCreateComponent {
-  @Output() postCreated = new EventEmitter<Post>();
+export class PostCreateComponent implements OnDestroy {
+  $addPost: Subscription = new Subscription();
 
   constructor(public postsService: PostsService) {}
 
   onAddPost(postForm: NgForm) {
     if (postForm.invalid) return;
-    this.postsService.addPost(postForm.value.title,postForm.value.content)
+    const title = postForm.value.title;
+    const content = postForm.value.content;
+    this.$addPost = this.postsService
+      .addPost(title, content)
+      .subscribe((res) => console.log(res));
     postForm.resetForm();
+  }
+  ngOnDestroy(): void {
+    this.$addPost.unsubscribe();
   }
 }

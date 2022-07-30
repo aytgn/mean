@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const Post = require("./models/post");
 const mongoose = require("mongoose");
+//connection
 mongoose
   .connect(
     "mongodb+srv://aytgn:zTc0JAIjEQLKqQBY@meanmaincluster.5x8op.mongodb.net/?retryWrites=true&w=majority"
@@ -12,6 +13,7 @@ mongoose
   .catch(() => {
     console.log("DB connection failed");
   });
+//middleware
 app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -20,28 +22,28 @@ app.use((req, res, next) => {
     "Origin,X-Requested-With,Content-Type,Accent"
   );
   res.setHeader(
-    "Access-Controls-Allow-Methods",
+    "Access-Control-Allow-Methods",
     "GET, POST, PATCH, DELETE, OPTIONS"
   );
   next();
 });
-app.post("/api/posts", (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
-  post.save();
-  res.status(201).json({ message: "Post Added" });
-});
+//methods
 app.get("/api/posts", (req, res, next) => {
   Post.find().then((posts) => {
-    console.log(posts);
-    res.status(200).json({
-      message: "Posts fetched",
-      posts,
-    });
+    res.status(200).json({ message: "posts fetched", posts });
   });
 });
-
+app.post("/api/posts", (req, res, next) => {
+  const post = new Post(req.body);
+  post
+    .save()
+    .then((post) => res.status(201).json({ message: "post created!" }))
+    .catch((err) => res.status(400).json("an error occurred"));
+});
+app.delete("/api/posts/:id", (req, res, next) => {
+  Post.deleteOne({ _id: req.params.id }).then(() => {
+    res.status(200).json({ message: "Post deleted" });
+  });
+});
 module.exports = app;
 // zTc0JAIjEQLKqQBY
