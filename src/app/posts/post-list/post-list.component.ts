@@ -9,15 +9,17 @@ import { PostsService } from '../posts.service';
 })
 export class PostListComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
-  private $getPosts: Subscription = new Subscription();
-
+  $getPosts = new Subscription();
   constructor(public postsService: PostsService) {}
 
   ngOnInit() {
-    this.$getPosts = this.postsService.getPosts().subscribe((data) => {
-      console.log(data.message);
-      this.posts = data.posts;
+    this.postsService.$getPosts.subscribe((posts) => {
+      console.log('change detected');
+      this.posts = posts;
+      console.log(posts.length);
     });
+
+    this.postsService.updatePosts();
   }
   ngOnDestroy() {
     this.$getPosts.unsubscribe();

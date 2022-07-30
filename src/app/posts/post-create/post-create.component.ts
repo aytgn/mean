@@ -17,10 +17,11 @@ export class PostCreateComponent implements OnDestroy {
     if (postForm.invalid) return;
     const title = postForm.value.title;
     const content = postForm.value.content;
-    this.$addPost = this.postsService
-      .addPost(title, content)
-      .subscribe((res) => console.log(res));
-    postForm.resetForm();
+
+    this.$addPost = this.postsService.addPost(title, content).subscribe(() => {
+      postForm.resetForm();
+      this.postsService.updatePosts();
+    });
   }
   ngOnDestroy(): void {
     this.$addPost.unsubscribe();
