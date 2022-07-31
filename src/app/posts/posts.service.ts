@@ -6,7 +6,7 @@ import { Post } from './post.model';
 @Injectable({ providedIn: 'root' })
 export class PostsService {
   $getPosts = new Subject<Post[]>();
-
+  $getPost = new Subject<any>();
   constructor(private http: HttpClient) {}
 
   updatePosts() {
@@ -33,6 +33,34 @@ export class PostsService {
     return this.http.post('http://localhost:3000/api/posts', postToAdd);
   }
   deletePost(postId: string) {
-    return this.http.delete('http://localhost:3000/api/posts/' + postId);
+    return this.http.delete(`http://localhost:3000/api/posts/${postId}`);
+  }
+  editPost(postId: string, title: string, content: string) {
+    const postToEdit = { title, content };
+    return this.http.put(
+      `http://localhost:3000/api/posts/${postId}`,
+      postToEdit
+    );
+  }
+  getPostById(postId: string | null) {
+    if (!postId) return;
+    this.http
+      .get(`http://localhost:3000/api/posts/${postId}`)
+      .pipe(
+        first(),
+        map((data: any) => {
+          const message = data.message;
+          const fetchedPost = data.post;
+          const post: Post = {
+            id: fetchedPost._id,
+            title: fetchedPost.title,
+            content: fetchedPost.content,
+          };
+          return post;
+        })
+      )
+      .subscribe((post) => {
+        this.$getPost.next(post);
+      });
   }
 }
