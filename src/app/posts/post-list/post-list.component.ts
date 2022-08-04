@@ -8,6 +8,7 @@ import { PostsService } from '../posts.service';
   styleUrls: ['./post-list.component.css'],
 })
 export class PostListComponent implements OnInit, OnDestroy {
+  isLoaded = false;
   posts: Post[] = [];
   $getPosts = new Subscription();
   constructor(public postsService: PostsService) {}
@@ -15,6 +16,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.$getPosts = this.postsService.$getPosts.subscribe((posts) => {
       this.posts = posts;
+      this.isLoaded = true;
     });
     this.postsService.updatePosts();
   }

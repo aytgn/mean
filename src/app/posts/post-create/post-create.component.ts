@@ -22,6 +22,7 @@ export class PostCreateComponent implements OnDestroy, OnInit {
   $editPost: Subscription = new Subscription();
   mode = 'create';
   post: Post | null = null;
+  isLoaded: boolean = false;
   constructor(
     public postsService: PostsService,
     public route: ActivatedRoute,
@@ -30,10 +31,14 @@ export class PostCreateComponent implements OnDestroy, OnInit {
   //LIFECYCLE
   ngOnInit(): void {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      if (!paramMap.has('postId')) return;
+      if (!paramMap.has('postId')) {
+        this.isLoaded = true;
+        return;
+      }
       this.mode = 'edit';
       this.$getPost = this.postsService.$getPost.subscribe((post) => {
         this.post = post;
+        this.isLoaded = true;
       });
       const param = paramMap.get('postId');
       this.postsService.getPostById(param);

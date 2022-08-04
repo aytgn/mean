@@ -3,8 +3,13 @@
   margin-top: 2rem;
 }
 
-.aga p {
+.no-posts p {
   text-align: center;
   font-weight: bold;
   letter-spacing: 0.3rem;
+}
+mat-spinner {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
