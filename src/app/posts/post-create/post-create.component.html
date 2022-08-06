@@ -1,31 +1,36 @@
 <mat-spinner *ngIf="!isLoaded"></mat-spinner>
 <mat-card *ngIf="isLoaded">
-  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+  <form [formGroup]="postForm" (submit)="onAddPost(postForm)">
     <mat-form-field>
       <input
+        formControlName="title"
         matInput
         type="text"
         [placeholder]="'TITLE'"
         name="title"
-        [ngModel]="post?.title"
-        #title="ngModel"
-        required
       />
-      <mat-error *ngIf="title.invalid"
+      <mat-error *ngIf="postForm.get('title')?.invalid"
         >Title is <strong>required</strong></mat-error
       >
     </mat-form-field>
+    <div>
+      <button mat-stroked-button color="primary" (click)="filePicker.click()">
+        Add Image
+      </button>
+      <input type="file" hidden #filePicker (change)="onFilePicked($event)" />
+    </div>
+    <div class="image-preview" *ngIf="imagePreview">
+      <img [src]="imagePreview" [alt]="postForm.value.title" />
+    </div>
     <mat-form-field>
       <textarea
+        formControlName="content"
         matInput
         rows="4"
-        [placeholder]="'CONTENT'"
         name="content"
-        [ngModel]="post?.content"
-        #content="ngModel"
-        required
+        [placeholder]="'CONTENT'"
       ></textarea>
-      <mat-error *ngIf="content.invalid"
+      <mat-error *ngIf="postForm.get('content')?.invalid"
         >Content is <strong>required</strong></mat-error
       >
     </mat-form-field>

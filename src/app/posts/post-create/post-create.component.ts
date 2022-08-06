@@ -5,7 +5,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
@@ -23,6 +23,8 @@ export class PostCreateComponent implements OnDestroy, OnInit {
   mode = 'create';
   post: Post | null = null;
   isLoaded: boolean = false;
+  postForm: FormGroup = new FormGroup('');
+  imagePreview: string | null = null;
   constructor(
     public postsService: PostsService,
     public route: ActivatedRoute,
@@ -30,6 +32,13 @@ export class PostCreateComponent implements OnDestroy, OnInit {
   ) {}
   //LIFECYCLE
   ngOnInit(): void {
+    this.postForm = new FormGroup({
+      title: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)],
+      }),
+      content: new FormControl(null, { validators: [Validators.required] }),
+      file: new FormControl(null, [Validators.required]),
+    });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (!paramMap.has('postId')) {
         this.isLoaded = true;
@@ -38,6 +47,10 @@ export class PostCreateComponent implements OnDestroy, OnInit {
       this.mode = 'edit';
       this.$getPost = this.postsService.$getPost.subscribe((post) => {
         this.post = post;
+        this.postForm.setValue({
+          title: this.post?.title,
+          content: this.post?.content,
+        });
         this.isLoaded = true;
       });
       const param = paramMap.get('postId');
@@ -50,7 +63,7 @@ export class PostCreateComponent implements OnDestroy, OnInit {
     this.$editPost.unsubscribe();
   }
   //METHODS
-  onAddPost(postForm: NgForm) {
+  onAddPost(postForm: FormGroup) {
     if (postForm.invalid) return;
     const title: string = postForm.value.title;
     const content: string = postForm.value.content;
@@ -60,7 +73,7 @@ export class PostCreateComponent implements OnDestroy, OnInit {
         this.$editPost = this.postsService
           .editPost(this.post.id, title, content)
           .subscribe(() => {
-            postForm.resetForm();
+            postForm.setValue({ title: '', content: '' });
             this.postsService.updatePosts();
             this.router.navigate(['/']);
           });
@@ -69,9 +82,20 @@ export class PostCreateComponent implements OnDestroy, OnInit {
     }
     //if create mode
     this.$addPost = this.postsService.addPost(title, content).subscribe(() => {
-      postForm.resetForm();
+      postForm.setValue({ title: '', content: '' });
       this.postsService.updatePosts();
       this.router.navigate(['/']);
     });
+  }
+  onFilePicked(event: Event) {
+    const el = event.target as HTMLInputElement;
+    const file = el.files ? el.files[0] : null;
+    this.postForm.patchValue({ file });
+    this.postForm.get('file')?.updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file as Blob);
   }
 }
