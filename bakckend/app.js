@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const postRoutes = require("./routes/posts");
+const multer = require("multer");
+const upload = multer();
 //connection
 mongoose
   .connect(
@@ -15,6 +17,7 @@ mongoose
   });
 //middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -27,6 +30,8 @@ app.use((req, res, next) => {
   );
   next();
 });
+app.use(upload.array());
+app.use(express.static("public"));
 //routes
 app.use("/api/posts", postRoutes);
 

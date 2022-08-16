@@ -17,7 +17,13 @@
       <button mat-stroked-button color="primary" (click)="filePicker.click()">
         Add Image
       </button>
-      <input type="file" hidden #filePicker (change)="onFilePicked($event)" />
+      <input
+        type="file"
+        hidden
+        #filePicker
+        formControlName="uploadedImage"
+        (change)="onFilePicked($event)"
+      />
     </div>
     <div class="image-preview" *ngIf="imagePreview">
       <img [src]="imagePreview" [alt]="postForm.value.title" />

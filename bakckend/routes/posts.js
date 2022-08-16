@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const Post = require("../models/post");
 
 //router routes
@@ -15,11 +14,7 @@ router.get("/:id", (req, res, next) => {
   });
 });
 router.post("/", (req, res, next) => {
-  const post = new Post(req.body);
-  post
-    .save()
-    .then(() => res.status(201).json({ message: "post created!" }))
-    .catch(() => res.status(400).json("an error occurred"));
+  console.log("req body:", req.body);
 });
 router.put("/:id", (req, res, next) => {
   const postToEdit = req.body;

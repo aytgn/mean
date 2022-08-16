@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -37,7 +31,9 @@ export class PostCreateComponent implements OnDestroy, OnInit {
         validators: [Validators.required, Validators.minLength(3)],
       }),
       content: new FormControl(null, { validators: [Validators.required] }),
-      file: new FormControl(null, [Validators.required]),
+      uploadedImage: new FormControl(null, {
+        validators: [Validators.required],
+      }),
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (!paramMap.has('postId')) {
@@ -47,9 +43,10 @@ export class PostCreateComponent implements OnDestroy, OnInit {
       this.mode = 'edit';
       this.$getPost = this.postsService.$getPost.subscribe((post) => {
         this.post = post;
-        this.postForm.setValue({
+        this.postForm.patchValue({
           title: this.post?.title,
           content: this.post?.content,
+          file: this.post?.file,
         });
         this.isLoaded = true;
       });
@@ -67,6 +64,8 @@ export class PostCreateComponent implements OnDestroy, OnInit {
     if (postForm.invalid) return;
     const title: string = postForm.value.title;
     const content: string = postForm.value.content;
+    const uploadedImage: File = postForm.value.uploadedImage;
+    console.log(postForm.value);
     //if edit mode
     if ((this.mode = 'edit')) {
       if (this.post) {
@@ -81,11 +80,13 @@ export class PostCreateComponent implements OnDestroy, OnInit {
       }
     }
     //if create mode
-    this.$addPost = this.postsService.addPost(title, content).subscribe(() => {
-      postForm.setValue({ title: '', content: '' });
-      this.postsService.updatePosts();
-      this.router.navigate(['/']);
-    });
+    this.$addPost = this.postsService
+      .addPost(title, content, uploadedImage)
+      .subscribe(() => {
+        postForm.setValue({ title: '', content: '', uploadedImage: null });
+        this.postsService.updatePosts();
+        this.router.navigate(['/']);
+      });
   }
   onFilePicked(event: Event) {
     const el = event.target as HTMLInputElement;

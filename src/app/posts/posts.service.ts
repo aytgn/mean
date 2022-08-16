@@ -20,6 +20,7 @@ export class PostsService {
             id: post._id,
             title: post.title,
             content: post.content,
+            file: post.file,
           }));
           return { message, posts };
         })
@@ -28,9 +29,13 @@ export class PostsService {
         this.$getPosts.next(data.posts);
       });
   }
-  addPost(title: string, content: string) {
-    const postToAdd = { title, content };
-    return this.http.post('http://localhost:3000/api/posts', postToAdd);
+  addPost(title: string, content: string, uploadedImage: File) {
+    console.log('uploaded image: ', uploadedImage);
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', uploadedImage, 'image');
+    return this.http.post('http://localhost:3000/api/posts', postData);
   }
   deletePost(postId: string) {
     return this.http.delete(`http://localhost:3000/api/posts/${postId}`);
@@ -55,6 +60,7 @@ export class PostsService {
             id: fetchedPost._id,
             title: fetchedPost.title,
             content: fetchedPost.content,
+            file: fetchedPost.file,
           };
           return post;
         })
