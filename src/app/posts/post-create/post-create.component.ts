@@ -90,13 +90,6 @@ export class PostCreateComponent implements OnDestroy, OnInit {
   }
   onFilePicked(event: Event) {
     const el = event.target as HTMLInputElement;
-    const file = el.files ? el.files[0] : null;
-    this.postForm.patchValue({ file });
-    this.postForm.get('file')?.updateValueAndValidity();
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result as string;
-    };
-    reader.readAsDataURL(file as Blob);
+    console.dir(el.files);
   }
 }
