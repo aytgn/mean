@@ -29,12 +29,12 @@ export class PostsService {
         this.$getPosts.next(data.posts);
       });
   }
-  addPost(title: string, content: string, uploadedImage: File) {
-    console.log('uploaded image: ', uploadedImage);
+  addPost(title: string, content: string, uploadedImageSource: File) {
+    console.log('uploaded image: ', uploadedImageSource);
     const postData = new FormData();
     postData.append('title', title);
     postData.append('content', content);
-    postData.append('image', uploadedImage, 'image');
+    postData.append('image', uploadedImageSource, 'image');
     return this.http.post('http://localhost:3000/api/posts', postData);
   }
   deletePost(postId: string) {

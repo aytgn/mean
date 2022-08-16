@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
-
+const multer = require("multer");
+const upload = multer();
 //router routes
 router.get("/", (req, res, next) => {
   Post.find().then((posts) => {
@@ -13,8 +14,20 @@ router.get("/:id", (req, res, next) => {
     res.status(200).json({ message: "post fetched", post });
   });
 });
-router.post("/", (req, res, next) => {
-  console.log("req body:", req.body);
+router.post("/", upload.array("image"), (req, res, next) => {
+  const post = new Post();
+  post.title = req.body.title;
+  post.content = req.body.content;
+  post.image = req.files[0].buffer;
+  console.log(req.files[0].buffer);
+  post
+    .save()
+    .then(() => {
+      res.status(200).send({ message: "added successfully" });
+    })
+    .catch((err) => {
+      res.status(400).send({ err });
+    });
 });
 router.put("/:id", (req, res, next) => {
   const postToEdit = req.body;

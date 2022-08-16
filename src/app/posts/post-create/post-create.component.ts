@@ -34,6 +34,9 @@ export class PostCreateComponent implements OnDestroy, OnInit {
       uploadedImage: new FormControl(null, {
         validators: [Validators.required],
       }),
+      uploadedImageSource: new FormControl(null, {
+        validators: [Validators.required],
+      }),
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (!paramMap.has('postId')) {
@@ -64,7 +67,7 @@ export class PostCreateComponent implements OnDestroy, OnInit {
     if (postForm.invalid) return;
     const title: string = postForm.value.title;
     const content: string = postForm.value.content;
-    const uploadedImage: File = postForm.value.uploadedImage;
+    const uploadedImageSource: File = postForm.value.uploadedImageSource;
     console.log(postForm.value);
     //if edit mode
     if ((this.mode = 'edit')) {
@@ -81,15 +84,21 @@ export class PostCreateComponent implements OnDestroy, OnInit {
     }
     //if create mode
     this.$addPost = this.postsService
-      .addPost(title, content, uploadedImage)
+      .addPost(title, content, uploadedImageSource)
       .subscribe(() => {
-        postForm.setValue({ title: '', content: '', uploadedImage: null });
+        postForm.setValue({
+          title: '',
+          content: '',
+          uploadedImage: null,
+          uploadedImageSource: null,
+        });
         this.postsService.updatePosts();
         this.router.navigate(['/']);
       });
   }
   onFilePicked(event: Event) {
     const el = event.target as HTMLInputElement;
-    console.dir(el.files);
+    const file = el.files ? el.files[0] : null;
+    this.postForm.patchValue({ uploadedImageSource: file });
   }
 }
