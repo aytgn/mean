@@ -5,9 +5,14 @@ const multer = require("multer");
 const upload = multer();
 //router routes
 router.get("/", (req, res, next) => {
-  Post.find().then((posts) => {
-    res.status(200).json({ message: "posts fetched", posts });
-  });
+  Post.find()
+    .then((posts) => {
+      console.log(posts)
+      res.status(200).json({ message: "posts fetched", posts });
+    })
+    .catch((err) => {
+      res.status(401).json({ err });
+    });
 });
 router.get("/:id", (req, res, next) => {
   Post.findById(req.params.id).then((post) => {

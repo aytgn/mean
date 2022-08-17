@@ -49,7 +49,7 @@ export class PostCreateComponent implements OnDestroy, OnInit {
         this.postForm.patchValue({
           title: this.post?.title,
           content: this.post?.content,
-          file: this.post?.file,
+          image: this.post?.image,
         });
         this.isLoaded = true;
       });

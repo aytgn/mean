@@ -20,7 +20,7 @@ export class PostsService {
             id: post._id,
             title: post.title,
             content: post.content,
-            file: post.file,
+            image: post.image,
           }));
           return { message, posts };
         })
@@ -60,7 +60,7 @@ export class PostsService {
             id: fetchedPost._id,
             title: fetchedPost.title,
             content: fetchedPost.content,
-            file: fetchedPost.file,
+            image: fetchedPost.image,
           };
           return post;
         })

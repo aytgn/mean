@@ -8,6 +8,7 @@
         <mat-panel-title> {{ post.title }} </mat-panel-title>
       </mat-expansion-panel-header>
       <p>{{ post.content }}.</p>
+      <div><img [src]="postImage" alt="img" /></div>
       <mat-action-row>
         <button mat-button color="accent" routerLink="edit/{{ post.id }}">
           EDIT
